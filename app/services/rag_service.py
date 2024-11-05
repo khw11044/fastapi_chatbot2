@@ -1,11 +1,8 @@
-from langchain.prompts import PromptTemplate
-from langchain.schema.output_parser import StrOutputParser
+
 from langchain_openai import ChatOpenAI
 from langchain_community.chat_models import ChatOllama
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain.schema import HumanMessage
 from langchain_community.retrievers import BM25Retriever
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -18,15 +15,15 @@ load_dotenv()
 
 class RagPipeline:
     def __init__(self):
-        # self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.1)
-        self.llm = ChatOllama(model="llama3.2", temperature=0.1)
+        self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.1)
+        # self.llm = ChatOllama(model="llama3.2", temperature=0.1)
         self.retriever = self.init_retriever()
         self.chain = self.init_chain()
         self.session_histories = {}
         self.current_session_id = 'a000000'
         
     def init_retriever(self):            
-        all_docs = ["아몬드", "시리얼", "코코볼"]
+        all_docs = ["아몬드, 시리얼, 코코볼"]
         bm25_retriever = BM25Retriever.from_texts(all_docs)
         bm25_retriever.k = 1                                            # BM25Retriever의 검색 결과 개수를 1로 설정합니다.
         return bm25_retriever

@@ -12,7 +12,7 @@ def my_stt() :
     
     try :
         mySpeech = recognizer.recognize_google(audio, language='ko-KR', show_all=False)
-    
+        print(mySpeech)
         return mySpeech
         
     except sr.UnknownValueError:

@@ -7,6 +7,7 @@ router = APIRouter()
 async def audio():
     try:
         transcription = my_stt()
+        print(transcription)
         if transcription:
             return {"transcription": transcription}
         else:

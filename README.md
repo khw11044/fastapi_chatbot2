@@ -10,7 +10,7 @@ pip install dlib
 pip install face-recognition
 
 
-uvicorn app.main:app --reload
+> uvicorn app.main:app --reload
 
 
 

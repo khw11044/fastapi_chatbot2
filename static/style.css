@@ -9,9 +9,65 @@ body {
     background-color: #f7f7f8;
 }
 
+/* 메인 컨테이너 */
+.container {
+    display: flex;
+    align-items: center;
+    height: 90vh;
+    width: 90%;
+}
+
+/* 왼쪽 카메라 스트리밍 창 */
+.camera-container {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+/* 각 카메라 스트림을 위쪽으로 정렬 */
+.camera-stream {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000; /* 기본 검은 화면 */
+    border-radius: 10px;
+    margin: 5px;
+    padding: 10px;
+}
+
+/* 카메라 헤더 스타일 (제목과 스위치) */
+.camera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* 카메라 피드 스타일 */
+.camera-feed {
+    width: 100%;
+    height: 300px;
+    background-color: #000; /* 기본 검은 화면 */
+    border-radius: 10px;
+}
+
+
+/* 가운데 회색선 */
+.divider {
+    width: 2px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+/* 오른쪽 챗봇 창 */
 .chat-container {
-    width: 400px;
-    height: 80vh;
+    width: 30%; 
+    height: 100%;
     display: flex;
     flex-direction: column;
     border: 1px solid #ddd;
@@ -19,6 +75,7 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     background-color: #fff;
+    margin-left: 20px;
 }
 
 .chat-header {
@@ -38,24 +95,29 @@ body {
 }
 
 .message {
+    
     margin: 8px 0;
     padding: 10px;
     border-radius: 8px;
     max-width: 75%;
     line-height: 1.4;
     word-wrap: break-word;
+    word-break: break-word; /* 긴 단어를 줄 바꿈 처리 */
 }
+
 
 .user {
     align-self: flex-end;
     background-color: #daf8cb;
     color: #333;
+    margin-left: auto; /* 오른쪽 정렬 */
 }
 
 .bot {
     align-self: flex-start;
     background-color: #f1f0f0;
     color: #333;
+    margin-right: auto; /* 왼쪽 정렬 */
 }
 
 /* 입력창 스타일 */

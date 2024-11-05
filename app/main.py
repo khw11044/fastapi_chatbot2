@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from app.routers import chatbot, audio
+from app.routers import chatbot, audio, stream  
 
 app = FastAPI()
 
@@ -22,6 +22,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # 라우터 등록
 app.include_router(chatbot.router)
 app.include_router(audio.router)
+app.include_router(stream.router)  # 라우터 등록
 
 # 루트 경로에서 index.html 반환
 @app.get("/", response_class=HTMLResponse)
