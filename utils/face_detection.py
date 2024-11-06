@@ -71,7 +71,6 @@ def get_face_bbox2(frame, mp_face_detection, thereisface):
                 face_locations.append([ymin, xmax, ymax, xmin])
 
                 
-            
             face_encodings = face_recognition.face_encodings(frame, face_locations)
             
             for idx, [ymin, xmax, ymax, xmin] in enumerate(face_locations):
@@ -112,6 +111,8 @@ def get_face_bbox3(frame, mp_face_detection, thereisface):
                 xmax = xmin + width
                 ymax = ymin + height
                 
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
+                
                 if not thereisface:
                     face_encodings = face_recognition.face_encodings(frame, [[ymin, xmax, ymax, xmin]])
 
@@ -127,8 +128,155 @@ def get_face_bbox3(frame, mp_face_detection, thereisface):
                     #     known_face_encodings, known_face_names = get_faces(faceDB)
                     #     name = "a{:08}".format(len(known_face_names))
                     
+                
+                if thereisface:
+                    cv2.putText(frame, thereisface, (xmin + 10, ymax - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)    
+
+        else:
+            thereisface = None
+        
+    return frame, thereisface
+
+def get_face_bbox4(frame, mp_face_detection, thereisface, face_cnt):
+
+    with mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5) as face_detection:
+        frame.flags.writeable = False
+        results = face_detection.process(frame)
+        frame.flags.writeable = True
+
+        h, w, _ = frame.shape
+        
+        if results.detections:
+            face_cnt += 1
+            detection = results.detections[0]
+            
+            bbox = detection.location_data.relative_bounding_box
+            xmin = int(bbox.xmin * w * 0.9)
+            ymin = int(bbox.ymin * h * 0.9)
+            width = int(bbox.width * w * 1.1)
+            height = int(bbox.height * h * 1.1)
+            xmax = xmin + width
+            ymax = ymin + height
+            
+            cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
+            
+            if face_cnt>15:
+                if not thereisface:
+                    face_encodings = face_recognition.face_encodings(frame, [[ymin, xmax, ymax, xmin]])
+
+                    matches = face_recognition.compare_faces(known_face_encodings, face_encodings[0], 0.4)
+
+                    # 인식할 사람에 속한다면 이름을 가져옵니다.
+                    if True in matches:
+                        first_match_index = matches.index(True)
+                        name = known_face_names[first_match_index]
+                        thereisface.append(name)
                     
+                
+                if thereisface:
+                    cv2.putText(frame, thereisface[0], (xmin + 10, ymax - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)    
+
+        else:
+            thereisface = []
+            face_cnt = 0
+        
+    return frame, thereisface, face_cnt
+
+
+def get_face_bbox5(frame, mp_face_detection, thereisface):
+
+    with mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5) as face_detection:
+        frame.flags.writeable = False
+        results = face_detection.process(frame)
+        frame.flags.writeable = True
+
+        h, w, _ = frame.shape
+        
+        if results.detections:
+            
+            face_locations = []
+            
+            for detection in results.detections:
+                bbox = detection.location_data.relative_bounding_box
+                xmin = int(bbox.xmin * w * 0.9)
+                ymin = int(bbox.ymin * h * 0.9)
+                width = int(bbox.width * w * 1.1)
+                height = int(bbox.height * h * 1.1)
+                xmax = xmin + width
+                ymax = ymin + height
+                
+                face_locations.append([ymin, xmax, ymax, xmin])
+
+            
+            # 이전 프레임에서 탐지된 얼굴 수와 얼굴 개수가 다를 경우 
+            if len(face_locations)== len(thereisface):
+                for idx, [ymin, xmax, ymax, xmin] in enumerate(face_locations):
+                    cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
+                    name = thereisface[idx]
+                    cv2.putText(frame, name, (xmin + 10, ymax - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)    
+            else:
+                face_encodings = face_recognition.face_encodings(frame, face_locations)
+
+                for idx, [ymin, xmax, ymax, xmin] in enumerate(face_locations):
+                    matches = face_recognition.compare_faces(known_face_encodings, face_encodings[idx], 0.4)
+                    name = "Unknown"
+
+                    # 인식할 사람에 속한다면 이름을 가져옵니다.
+                    if True in matches:
+                        first_match_index = matches.index(True)
+                        name = known_face_names[first_match_index]
+                        thereisface.append(name)
+                
+                    cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
+                    cv2.putText(frame, name, (xmin + 10, ymax - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)    
+
+            
+        else:
+            thereisface = []
+        
+    return frame, thereisface
+
+
+def get_face_bbox6(frame, mp_face_detection, thereisface):
+
+    with mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5) as face_detection:
+        frame.flags.writeable = False
+        results = face_detection.process(frame)
+        frame.flags.writeable = True
+
+        h, w, _ = frame.shape
+        
+        if results.detections:
+            
+            thereisface = [[] for _ in range(len(results.detections))] 
+            
+            for idx, detection in enumerate(results.detections):
+                bbox = detection.location_data.relative_bounding_box
+                xmin = int(bbox.xmin * w * 0.9)
+                ymin = int(bbox.ymin * h * 0.9)
+                width = int(bbox.width * w * 1.1)
+                height = int(bbox.height * h * 1.1)
+                xmax = xmin + width
+                ymax = ymin + height
+                
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
+                
+                if not thereisface[idx]:
+                    face_encodings = face_recognition.face_encodings(frame, [[ymin, xmax, ymax, xmin]])
+
+                    matches = face_recognition.compare_faces(known_face_encodings, face_encodings[0], 0.4)
+
+                    # 인식할 사람에 속한다면 이름을 가져옵니다.
+                    if True in matches:
+                        first_match_index = matches.index(True)
+                        name = known_face_names[first_match_index]
+                        thereisface = name
+                    
+                    # else:
+                    #     known_face_encodings, known_face_names = get_faces(faceDB)
+                    #     name = "a{:08}".format(len(known_face_names))
+                    
+                
                 if thereisface:
                     cv2.putText(frame, thereisface, (xmin + 10, ymax - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)    
 

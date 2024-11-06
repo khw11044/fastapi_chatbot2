@@ -19,11 +19,12 @@ async def camera_stream(websocket: WebSocket, camera_id: int):
         return
 
     try:
-        thereisface = None
+        thereisface = []
+        face_cnt = 0
         while True:
 
             # 프레임 가져오기
-            frame, thereisface = get_camera_frame(camera_id, thereisface)
+            frame, thereisface, face_cnt = get_camera_frame(camera_id, thereisface, face_cnt)
             if frame is None:
                 await websocket.send_text("Failed to capture frame.")
                 await websocket.close()

@@ -1,7 +1,7 @@
 import cv2
 import time 
 import mediapipe as mp
-from utils.face_detection import get_face_bbox, get_face_bbox2, get_face_bbox3
+from utils.face_detection import *
 # 카메라 스트림 관리를 위한 변수
 camera_streams = {}
 mp_face_detection = mp.solutions.face_detection
@@ -33,7 +33,7 @@ def close_camera(camera_id):
     else:
         print(f"Camera {camera_id} is not open.")
 
-def get_camera_frame(camera_id, thereisface):
+def get_camera_frame(camera_id, thereisface, face_cnt):
     """특정 카메라 ID의 현재 프레임을 캡처하여 반환합니다."""
     cap = camera_streams.get(camera_id)
     if not cap or not cap.isOpened():
@@ -49,7 +49,7 @@ def get_camera_frame(camera_id, thereisface):
     frame = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
     
     if camera_id==0:
-        frame, thereisface = get_face_bbox3(frame, mp_face_detection, thereisface)
+        frame, thereisface, face_cnt = get_face_bbox4(frame, mp_face_detection, thereisface, face_cnt)
 
         curTime = time.time()
         sec = curTime - prevTime
@@ -65,5 +65,5 @@ def get_camera_frame(camera_id, thereisface):
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
             
-    return frame, thereisface
+    return frame, thereisface, face_cnt
 
