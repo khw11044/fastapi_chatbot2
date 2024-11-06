@@ -10,7 +10,7 @@ function toggleCamera(cameraId) {
         if (cameraId === 1) {
             camera1WebSocket = startStreamWebSocket(cameraId - 1, feedElement);
         } else if (cameraId === 2) {
-            camera2WebSocket = startStreamWebSocket(cameraId - 1, feedElement);
+            camera2WebSocket = startStreamWebSocket(cameraId, feedElement);
         }
     } else {
         // 카메라 끄기 - WebSocket 연결 종료 및 검은 화면 표시

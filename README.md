@@ -1,14 +1,6 @@
 
 
-cmake 설치 필요
-
-
-pip install cmake
-
-pip install dlib
-
-pip install face-recognition
-
+> pip install -r requirements.txt
 
 > uvicorn app.main:app --reload
 

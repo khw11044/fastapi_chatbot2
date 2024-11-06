@@ -15,8 +15,8 @@ load_dotenv()
 
 class RagPipeline:
     def __init__(self):
-        self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.1)
-        # self.llm = ChatOllama(model="llama3.2", temperature=0.1)
+        # self.llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.1)
+        self.llm = ChatOllama(model="llama3.2", temperature=0.1)
         self.retriever = self.init_retriever()
         self.chain = self.init_chain()
         self.session_histories = {}
@@ -25,7 +25,7 @@ class RagPipeline:
     def init_retriever(self):            
         all_docs = ["아몬드, 시리얼, 코코볼"]
         bm25_retriever = BM25Retriever.from_texts(all_docs)
-        bm25_retriever.k = 1                                            # BM25Retriever의 검색 결과 개수를 1로 설정합니다.
+        bm25_retriever.k = 3                                       # BM25Retriever의 검색 결과 개수를 1로 설정합니다.
         return bm25_retriever
 
     def init_chain(self):
