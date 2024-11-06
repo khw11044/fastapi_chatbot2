@@ -3,6 +3,8 @@ from app.services.camera_service import open_camera, close_camera, get_camera_fr
 import asyncio
 import time 
 import cv2
+import httpx
+
 router = APIRouter()
 
 @router.websocket("/ws/stream")
@@ -21,6 +23,8 @@ async def camera_stream(websocket: WebSocket, camera_id: int):
     try:
         thereisface = []
         face_cnt = 0
+        session_id = None
+        session_id_cnt = 0
         while True:
 
             # 프레임 가져오기
@@ -29,7 +33,19 @@ async def camera_stream(websocket: WebSocket, camera_id: int):
                 await websocket.send_text("Failed to capture frame.")
                 await websocket.close()
                 break
-
+            
+            if face_cnt >= 15 and len(thereisface) > 0 and not session_id:
+                session_id = thereisface[0]
+            else:
+                session_id = None
+            
+            if session_id and session_id_cnt==0:
+                await send_session_to_chatbot(session_id)
+                session_id_cnt = 1
+            
+            if face_cnt < 15 and session_id_cnt==1:
+                session_id_cnt = 0
+            
             # 프레임을 JPEG로 인코딩
             _, jpeg_frame = cv2.imencode('.jpg', frame)
             jpeg_frame = jpeg_frame.tobytes()
@@ -40,3 +56,16 @@ async def camera_stream(websocket: WebSocket, camera_id: int):
     finally:
         # WebSocket 연결이 끊어지면 카메라 닫기
         close_camera(camera_id)
+
+async def send_session_to_chatbot(session_id: str):
+    """chatbot API에 session_id를 전송하는 함수"""
+    url = "http://localhost:8000/chat"  # chatbot API의 엔드포인트 URL
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json={"question": "init", "session_id": session_id})
+            if response.status_code == 200:
+                print(f"Session ID {session_id} successfully sent to chatbot.")
+            else:
+                print(f"Failed to send Session ID {session_id} to chatbot. Status code: {response.status_code}")
+        except httpx.RequestError as e:
+            print(f"An error occurred while sending session ID: {e}")
